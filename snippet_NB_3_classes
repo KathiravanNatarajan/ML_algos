@@ -1,0 +1,14 @@
+# Define the probability threshold
+threshold = 0.95
+
+# Get the top 3 predicted labels based on the threshold
+top_3_labels = []
+for prob in probabilities:
+    sorted_indices = np.argsort(prob)[::-1]  # Sort indices in descending order
+    top_labels = [idx for idx in sorted_indices if prob[idx] > threshold][:3]  # Filter labels above threshold
+    top_3_labels.append(top_labels)
+
+# Display the top 3 predicted labels for each sample based on the threshold
+print("Top 3 predicted labels based on threshold:")
+for labels in top_3_labels:
+    print(labels)
