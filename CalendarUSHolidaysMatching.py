@@ -1,25 +1,35 @@
 import pandas as pd
 import holidays
 
-# Sample DataFrame
+def get_holidays(date_column):
+    """
+    This function takes a pandas Series (column) with dates as input
+    and returns a Series with 1 for holidays and 0 for non-holidays based on the U.S. calendar.
+    
+    Parameters:
+    date_column (pd.Series): A pandas Series containing dates.
+    
+    Returns:
+    pd.Series: A pandas Series with binary values (1 for holidays and 0 for non-holidays).
+    """
+    # Create a US holidays object
+    us_holidays = holidays.US()
+    
+    # Apply a function to check if each date is a holiday
+    return date_column.apply(lambda x: 1 if x in us_holidays else 0)
+
+# Example usage:
 data = {
-    'date': ['2024-01-01', '2024-07-04', '2024-12-25', '2024-11-28', '2024-03-15'],
-    'event': ['New Year Party', 'Independence Day Celebration', 'Christmas', 'Thanksgiving', 'Regular Day']
+    'date': pd.to_datetime(['2024-07-01', '2024-07-02', '2024-07-03', '2024-07-04']),
+    'temperature': [75, 78, 82, 85],
+    'holiday': ['None', 'None', 'Independence Day', 'None'],  # Example: holiday names as strings
+    'sales': [250, 280, 320, 400]  # Example: target variable
 }
+
 df = pd.DataFrame(data)
-df['date'] = pd.to_datetime(df['date'])
 
-# Get US holidays for 2024
-us_holidays = holidays.UnitedStates(years=[2024])
+# Add the new 'is_holiday' column to the DataFrame using the get_holidays function
+df['is_holiday'] = get_holidays(df['date'])
 
-# Create a DataFrame from the holidays
-holidays_df = pd.DataFrame(list(us_holidays.items()), columns=['date', 'holiday'])
-holidays_df['date'] = pd.to_datetime(holidays_df['date'])
-
-# Merge the two DataFrames on the date column
-merged_df = pd.merge(df, holidays_df, on='date', how='left')
-
-# Fill NaN values in the holiday column with 'No Holiday'
-merged_df['holiday'].fillna('No Holiday', inplace=True)
-
-print(merged_df)
+# Print the DataFrame to see the result
+print(df)
